@@ -24,7 +24,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.popular_movies.Adapters.ReviewListAdapter;
-import com.example.popular_movies.MainActivity;
 import com.example.popular_movies.R;
 import com.example.popular_movies.Adapters.TrailerListAdapter;
 import com.example.popular_movies.app.AppController;
@@ -155,11 +154,23 @@ public class detailsFragmet extends android.support.v4.app.Fragment {
                         String Resolution = sharedPrefs.getString(getString(R.string.pref_resolution_key),getString(R.string.pref_Res_high));
 
                         if(Resolution.equals("high")){
-                            Picasso.with(getActivity()).load(Const.URL_IMAGE_PATH_high + temp.getBackImage_url()).into(imageview);
+                            Picasso.with(getActivity())
+                                    .load(Const.URL_IMAGE_PATH_high + temp.getBackImage_url())
+                                    .placeholder(R.drawable.load)
+                                    .error(R.drawable.wrong)
+                                    .into(imageview);
                         }else if(Resolution.equals("medium")){
-                            Picasso.with(getActivity()).load(Const.URL_IMAGE_PATH_medium + temp.getBackImage_url()).into(imageview);
+                            Picasso.with(getActivity())
+                                    .load(Const.URL_IMAGE_PATH_medium + temp.getBackImage_url())
+                                    .placeholder(R.drawable.load)
+                                    .error(R.drawable.wrong)
+                                    .into(imageview);
                         }else if(Resolution.equals("low")){
-                            Picasso.with(getActivity()).load(Const.URL_IMAGE_PATH_low + temp.getBackImage_url()).into(imageview);
+                            Picasso.with(getActivity())
+                                    .load(Const.URL_IMAGE_PATH_low + temp.getBackImage_url())
+                                    .placeholder(R.drawable.load)
+                                    .error(R.drawable.wrong)
+                                    .into(imageview);
                         }
 
                         imageview.setSelected(true);

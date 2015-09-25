@@ -10,4 +10,4 @@
         android:listSelector="@drawable/list_selector"
         android:adjustViewBounds="true"
         android:drawSelectorOnTop="true"
-        android:background="#009999"/>
+        android:background="#fff"/>

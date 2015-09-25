@@ -88,25 +88,6 @@ public class GridFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-
-        /*SharedPreferences sharedPrefs =
-                PreferenceManager.getDefaultSharedPreferences(getActivity());
-        String Resolution = sharedPrefs.getString(
-                getString(R.string.pref_resolution_key),
-                getString(R.string.pref_Res_high));
-
-        String sortBy = sharedPrefs.getString(
-                getString(R.string.pref_sortBy_key),
-                getString(R.string.pref_sortBy_mostPopular));
-
-        if (!sortBy.equals(this.sort_by)) {
-            changed = true;
-            last_position = 0;
-            makeJsonObjectRequest(1);
-        } else if (!Resolution.equals(this.Resolution)) {
-            changed = true;
-            makeJsonObjectRequest(1);
-        }*/
     }
 
     @Override

@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
-import com.example.popular_movies.MainActivity;
 import com.example.popular_movies.R;
 import com.example.popular_movies.fragments.GridFragment;
 import com.example.popular_movies.models.detailsModel;
@@ -71,11 +70,23 @@ public class GridViewAdapter extends BaseAdapter {
         GridFragment.setResolution(Resolution);
 
         if(Resolution.equals("high")){
-            Picasso.with(mContext).load(Const.URL_IMAGE_PATH_high + mThumbIds.get(position).getPosterImage_url()).into(holder.image);
+            Picasso.with(mContext)
+                    .load(Const.URL_IMAGE_PATH_high + mThumbIds.get(position).getPosterImage_url())
+                    .placeholder(R.drawable.load)
+                    .error(R.drawable.wrong)
+                    .into(holder.image);
         }else if(Resolution.equals("medium")){
-            Picasso.with(mContext).load(Const.URL_IMAGE_PATH_medium + mThumbIds.get(position).getPosterImage_url()).into(holder.image);
+            Picasso.with(mContext)
+                    .load(Const.URL_IMAGE_PATH_medium + mThumbIds.get(position).getPosterImage_url())
+                    .placeholder(R.drawable.load)
+                    .error(R.drawable.wrong)
+                    .into(holder.image);
         }else if(Resolution.equals("low")){
-            Picasso.with(mContext).load(Const.URL_IMAGE_PATH_low + mThumbIds.get(position).getPosterImage_url()).into(holder.image);
+            Picasso.with(mContext)
+                    .load(Const.URL_IMAGE_PATH_low + mThumbIds.get(position).getPosterImage_url())
+                    .placeholder(R.drawable.load)
+                    .error(R.drawable.wrong)
+                    .into(holder.image);
         }
 
         return convertView;
