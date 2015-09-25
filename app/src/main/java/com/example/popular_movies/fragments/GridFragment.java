@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -66,6 +67,9 @@ public class GridFragment extends Fragment {
     }
 
     static int last_position = 0;
+    protected static int temp = 0;
+
+    boolean changed = false;
 
     int screenOrientation;
 
@@ -87,10 +91,12 @@ public class GridFragment extends Fragment {
                 getString(R.string.pref_sortBy_key),
                 getString(R.string.pref_sortBy_mostPopular));
 
-        if(!sortBy.equals(this.sort_by)){
+        if (!sortBy.equals(this.sort_by)) {
+            changed = true;
             last_position = 0;
             makeJsonObjectRequest(1);
-        }else if(!Resolution.equals(this.Resolution)){
+        } else if (!Resolution.equals(this.Resolution)) {
+            changed = true;
             makeJsonObjectRequest(1);
         }
     }
@@ -101,6 +107,14 @@ public class GridFragment extends Fragment {
         // Inflate the layout for this fragment
         rootView = inflater.inflate(R.layout.fragment_grid, container, false);
 
+        SharedPreferences sharedPrefs =
+                PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String Resolution = sharedPrefs.getString(
+                getString(R.string.pref_resolution_key),
+                getString(R.string.pref_Res_high));
+
+        this.Resolution = Resolution;
+
         screenOrientation = getResources().getConfiguration().orientation;
 
         pDialog = new ProgressDialog(getActivity());
@@ -110,6 +124,18 @@ public class GridFragment extends Fragment {
         gridview = (GridView) rootView.findViewById(R.id.gridview);
 
         makeJsonObjectRequest(1);
+
+        temp = last_position;
+
+        gridview.setOnScrollListener(new EndlessScrollListener() {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount) {
+                //load next page when scroll down
+                last_position = totalItemsCount - 9;
+                Log.d("LOG", "" + "in scroll change" + last_position);
+                makeJsonObjectRequest(page);
+            }
+        });
 
         /*gridview.setOnScrollListener(new EndlessScrollListener() {
             @Override
@@ -168,7 +194,7 @@ public class GridFragment extends Fragment {
     /**
      * Method to make json object request where json response starts wtih {
      */
-    private void makeJsonObjectRequest(int page) {
+    private void makeJsonObjectRequest(final int page) {
 
         showpDialog();
 
@@ -195,7 +221,9 @@ public class GridFragment extends Fragment {
 
                 try {
 
-                    DetailsList = new ArrayList<detailsModel>();
+                    if(changed || DetailsList == null) {
+                        DetailsList = new ArrayList<detailsModel>();
+                    }
                     // Parsing json object response
                     JSONArray resultArray = response.getJSONArray(Const.OMG_RESULTS);
                     for (int i = 0; i < resultArray.length(); i++) {
@@ -212,7 +240,12 @@ public class GridFragment extends Fragment {
 
                     gridview.setOnItemClickListener(new Listeners(getActivity().getApplicationContext(), gridview));
 
-                    gridview.setSelection(last_position);
+                    Log.d("LOG", "" + "in background" + last_position);
+                    if(temp > last_position){
+                        gridview.setSelection(temp);
+                    } else {
+                        gridview.setSelection(last_position);
+                    }
 
                     if (screenOrientation == Configuration.ORIENTATION_LANDSCAPE && MainActivity.density > 600) {
                         set_default_item_details(last_position);
@@ -252,7 +285,7 @@ public class GridFragment extends Fragment {
         private Context mContext;
         private GridView mgridview;
 
-        public Listeners(Context context , GridView gridView) {
+        public Listeners(Context context, GridView gridView) {
             mContext = context;
             mgridview = gridView;
         }
@@ -263,7 +296,7 @@ public class GridFragment extends Fragment {
 
             mgridview.setSelected(true);
             mgridview.setSelection(position);
-            mgridview.setItemChecked(position,true);
+            mgridview.setItemChecked(position, true);
 
             int screenOrientation = getResources().getConfiguration().orientation;
 
@@ -272,9 +305,9 @@ public class GridFragment extends Fragment {
 
             if (screenOrientation == Configuration.ORIENTATION_PORTRAIT) {
                 startActivity(new Intent(mContext, ActivityDetails.class).putExtras(bundle));
-            }else if (screenOrientation == Configuration.ORIENTATION_LANDSCAPE && MainActivity.density < 600){
+            } else if (screenOrientation == Configuration.ORIENTATION_LANDSCAPE && MainActivity.density < 600) {
                 startActivity(new Intent(mContext, ActivityDetails.class).putExtras(bundle));
-            }else if (screenOrientation == Configuration.ORIENTATION_LANDSCAPE && MainActivity.density > 600){
+            } else if (screenOrientation == Configuration.ORIENTATION_LANDSCAPE && MainActivity.density > 600) {
                 detailsFragmet fragment = new detailsFragmet();
                 fragment.setArguments(bundle);
                 getActivity().getSupportFragmentManager().beginTransaction()

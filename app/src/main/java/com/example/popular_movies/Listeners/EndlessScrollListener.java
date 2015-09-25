@@ -1,5 +1,6 @@
 package com.example.popular_movies.Listeners;
 
+import android.util.Log;
 import android.widget.AbsListView;
 
 /**
@@ -10,7 +11,7 @@ public abstract class EndlessScrollListener implements AbsListView.OnScrollListe
     // before loading more.
     private int visibleThreshold = 5;
     // The current offset index of data you have loaded
-    private int currentPage = 0;
+    private int currentPage = 1;
     // The total number of items in the dataset after the last load
     private int previousTotalItemCount = 0;
     // True if we are still waiting for the last set of data to load.
@@ -18,12 +19,12 @@ public abstract class EndlessScrollListener implements AbsListView.OnScrollListe
     // Sets the starting page index
     private int startingPageIndex = 0;
 
-    public EndlessScrollListener() {
+    public EndlessScrollListener(){
     }
 
-    public EndlessScrollListener(int visibleThreshold) {
+    /*public EndlessScrollListener(int visibleThreshold) {
         this.visibleThreshold = visibleThreshold;
-    }
+    }*/
 
     public EndlessScrollListener(int visibleThreshold, int startPage) {
         this.visibleThreshold = visibleThreshold;
@@ -57,7 +58,8 @@ public abstract class EndlessScrollListener implements AbsListView.OnScrollListe
         // the visibleThreshold and need to reload more data.
         // If we do need to reload some more data, we execute onLoadMore to fetch the data.
         if (!loading && (totalItemCount - visibleItemCount)<=(firstVisibleItem + visibleThreshold)) {
-            onLoadMore(currentPage + 1, totalItemCount);
+            onLoadMore(currentPage , totalItemCount);
+            Log.d("LOG", "" + currentPage);
             loading = true;
         }
     }
