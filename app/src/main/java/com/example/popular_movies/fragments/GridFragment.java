@@ -56,6 +56,14 @@ public class GridFragment extends Fragment {
 
     private static String sort_by;
 
+    public static String getSort_by() {
+        return sort_by;
+    }
+
+    public static void setSort_by(String sort_by) {
+        GridFragment.sort_by = sort_by;
+    }
+
     private static String Resolution;
 
     public static String getResolution() {
@@ -66,10 +74,10 @@ public class GridFragment extends Fragment {
         Resolution = resolution;
     }
 
-    static int last_position = 0;
+    public static int last_position = 0;
     protected static int temp = 0;
 
-    boolean changed = false;
+    public static boolean changed = false;
 
     int screenOrientation;
 
@@ -81,7 +89,7 @@ public class GridFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        SharedPreferences sharedPrefs =
+        /*SharedPreferences sharedPrefs =
                 PreferenceManager.getDefaultSharedPreferences(getActivity());
         String Resolution = sharedPrefs.getString(
                 getString(R.string.pref_resolution_key),
@@ -98,7 +106,7 @@ public class GridFragment extends Fragment {
         } else if (!Resolution.equals(this.Resolution)) {
             changed = true;
             makeJsonObjectRequest(1);
-        }
+        }*/
     }
 
     @Override
@@ -136,37 +144,7 @@ public class GridFragment extends Fragment {
                 makeJsonObjectRequest(page);
             }
         });
-
-        /*gridview.setOnScrollListener(new EndlessScrollListener() {
-            @Override
-            public void onLoadMore(int page, int totalItemsCount) {
-                //load next page when scroll down
-                makeJsonObjectRequest(page);
-            }
-        });
-*/
         return rootView;
-    }
-
-
-    /**
-     * Method to hide the details pane
-     */
-    private void hideDetailsPane() {
-        View alphaPane = rootView.findViewById(R.id.details);
-        if (alphaPane.getVisibility() == View.VISIBLE) {
-            alphaPane.setVisibility(View.GONE);
-        }
-    }
-
-    /**
-     * Method to show the details pane
-     */
-    private void showDetailsPane() {
-        View alphaPane = rootView.findViewById(R.id.details);
-        if (alphaPane.getVisibility() == View.GONE) {
-            alphaPane.setVisibility(View.VISIBLE);
-        }
     }
 
     private void showpDialog() {
@@ -222,6 +200,7 @@ public class GridFragment extends Fragment {
                 try {
 
                     if(changed || DetailsList == null) {
+                        changed = false;
                         DetailsList = new ArrayList<detailsModel>();
                     }
                     // Parsing json object response
@@ -242,10 +221,10 @@ public class GridFragment extends Fragment {
 
                     Log.d("LOG", "" + "in background" + last_position);
                     if(temp > last_position){
-                        gridview.setSelection(temp);
-                    } else {
-                        gridview.setSelection(last_position);
+                        last_position = temp;
                     }
+
+                    gridview.setSelection(last_position);
 
                     if (screenOrientation == Configuration.ORIENTATION_LANDSCAPE && MainActivity.density > 600) {
                         set_default_item_details(last_position);

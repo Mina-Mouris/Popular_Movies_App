@@ -1,7 +1,9 @@
 package com.example.popular_movies;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -61,6 +63,35 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
+        SharedPreferences sharedPrefs =
+                PreferenceManager.getDefaultSharedPreferences(this);
+        String Resolution = sharedPrefs.getString(
+                getString(R.string.pref_resolution_key),
+                getString(R.string.pref_Res_high));
+
+        String sortBy = sharedPrefs.getString(
+                getString(R.string.pref_sortBy_key),
+                getString(R.string.pref_sortBy_mostPopular));
+
+        if (!sortBy.equals(GridFragment.getSort_by())) {
+            GridFragment.changed = true;
+            GridFragment.last_position = 0;
+            GridFragment fragment = new GridFragment();
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.grid, fragment)
+                    .commit();
+        } else if (!Resolution.equals(GridFragment.getResolution())) {
+            GridFragment.changed = true;
+            GridFragment fragment = new GridFragment();
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.grid, fragment)
+                    .commit();
+        }
+        GridFragment fragment = new GridFragment();
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.grid, fragment)
+                .commit();
     }
 
     /**
