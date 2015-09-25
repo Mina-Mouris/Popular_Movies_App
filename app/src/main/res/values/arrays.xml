@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="pref_sortBy_options">
+        <item>@string/pref_sortBy_label_mostPopular</item>
+        <item>@string/pref_sortBy_label_revenue</item>
+        <item>@string/pref_sortBy_label_highestRated</item>
+    </string-array>
+
+    <string-array name="pref_sortBy_values">
+        <item>@string/pref_sortBy_mostPopular</item>
+        <item>@string/pref_sortBy_revenue</item>
+        <item>@string/pref_sortBy_highestRated</item>
+    </string-array>
+
+
+    <string-array name="pref_Res_options">
+        <item>@string/pref_Resolution_label_high</item>
+        <item>@string/pref_Resolution_label_medium</item>
+        <item>@string/pref_Resolution_label_low</item>
+    </string-array>
+
+    <string-array name="pref_Res_values">
+        <item>@string/pref_Res_high</item>
+        <item>@string/pref_Res_medium</item>
+        <item>@string/pref_Res_low</item>
+    </string-array>
+
+</resources>

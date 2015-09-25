@@ -1,0 +1,13 @@
+ <GridView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/gridview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:numColumns="2"
+        android:stretchMode="columnWidth"
+        android:gravity="center"
+        android:layout_weight="12"
+        android:listSelector="@drawable/list_selector"
+        android:adjustViewBounds="true"
+        android:drawSelectorOnTop="true"
+        android:background="#009999"/>

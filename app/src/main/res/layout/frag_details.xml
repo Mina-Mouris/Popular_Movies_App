@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:id="@+id/linear"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:background="#009999"
+        android:orientation="vertical">
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="40dp"
+            android:gravity="center"
+            android:layout_centerVertical="true"
+            android:textSize="35sp"
+            android:textColor="#fff"
+            android:id="@+id/TitleTextView" />
+
+    </RelativeLayout>
+
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/scroll"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/linear">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/relative">
+
+
+            <ImageView
+                android:id="@+id/image"
+                android:layout_width="150dp"
+                android:layout_height="200dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="40dp"
+                android:scaleType="centerCrop" />
+
+            <TextView
+                android:id="@+id/DateView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_toRightOf="@+id/image"
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="40dp"
+                android:layout_marginRight="20dp"
+                android:gravity="left"
+                android:text=""
+                android:textSize="25dp" />
+
+            <TextView
+                android:id="@+id/Runtime"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_toRightOf="@+id/image"
+                android:layout_below="@+id/DateView"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="40dp"
+                android:layout_marginRight="20dp"
+                android:gravity="left"
+                android:text=""
+                android:textStyle="bold"
+                android:textSize="20dp" />
+
+            <TextView
+                android:id="@+id/Vote"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_toRightOf="@+id/image"
+                android:layout_below="@+id/Runtime"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="40dp"
+                android:layout_marginRight="20dp"
+                android:gravity="left"
+                android:text=""
+                android:textSize="18dp" />
+
+            <TextView
+                android:id="@+id/overView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="left"
+                android:textSize="20dp"
+                android:layout_marginTop="60dp"
+                android:layout_marginLeft="60dp"
+                android:layout_marginRight="60dp"
+                android:layout_below="@+id/image" />
+
+            <RelativeLayout
+                android:id="@+id/relative1"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/overView"
+                android:orientation="vertical">
+
+                <View android:id="@+id/separator"
+                    android:background="#000"
+                    android:layout_width = "fill_parent"
+                    android:layout_height="2dip"
+                    android:layout_margin="20dp"
+                    android:layout_alignParentTop="true"/>
+
+                <TextView
+                    android:id="@+id/t"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:layout_marginLeft="20dp"
+                    android:layout_below="@+id/separator"
+                    android:textStyle="bold"
+                    android:text="Trailers:"
+                    android:gravity="left"
+                    android:textSize="25dp"/>
+
+                <ListView
+                    android:id="@+id/listView"
+                    android:layout_margin="20dp"
+                    android:layout_width="fill_parent"
+                    android:layout_height="200dp"
+                    android:layout_below="@+id/t"
+                    android:layout_alignParentBottom="true">
+                </ListView>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/relative2"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/relative1"
+                android:orientation="vertical">
+
+                <View android:id="@+id/separator1"
+                    android:background="#000"
+                    android:layout_width = "fill_parent"
+                    android:layout_height="2dip"
+                    android:layout_margin="20dp"
+                    android:layout_alignParentTop="true"/>
+
+                <TextView
+                    android:id="@+id/tt"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:layout_marginLeft="20dp"
+                    android:layout_below="@+id/separator1"
+                    android:textStyle="bold"
+                    android:text="Reviews:"
+                    android:gravity="left"
+                    android:textSize="25dp"/>
+
+                <ListView
+                    android:id="@+id/ReviewlistView"
+                    android:layout_margin="20dp"
+                    android:layout_width="fill_parent"
+                    android:layout_height="200dp"
+                    android:layout_below="@+id/tt"
+                    android:layout_alignParentBottom="true">
+                </ListView>
+            </RelativeLayout>
+
+        </RelativeLayout>
+    </ScrollView>
+</RelativeLayout>
