@@ -88,10 +88,6 @@ public class MainActivity extends ActionBarActivity {
                     .replace(R.id.grid, fragment)
                     .commit();
         }
-        GridFragment fragment = new GridFragment();
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.grid, fragment)
-                .commit();
     }
 
     /**
