@@ -14,6 +14,7 @@
     <string name="pref_sortBy_label_mostPopular">Most Popular</string>
     <string name="pref_sortBy_label_revenue">Revenue</string>
     <string name="pref_sortBy_label_highestRated">Highest Rated</string>
+    <string name="pref_sortBy_label_favorite">Favorite</string>
     <string name="pref_Resolution_label_low">Low</string>
     <string name="pref_Resolution_label_medium">medium</string>
     <string name="pref_Resolution_label_high">High</string>
@@ -26,6 +27,7 @@
     <string name="pref_sortBy_mostPopular" translatable="false">popularity.desc</string>
     <string name="pref_sortBy_revenue" translatable="false">revenue.desc</string>
     <string name="pref_sortBy_highestRated" translatable="false">vote_average.desc</string>
+    <string name="pref_sortBy_favorite" translatable="false">favorite</string>
     <string name="pref_Res_low" translatable="false">low</string>
     <string name="pref_Res_medium" translatable="false">medium</string>
     <string name="pref_Res_high" translatable="false">high</string>
