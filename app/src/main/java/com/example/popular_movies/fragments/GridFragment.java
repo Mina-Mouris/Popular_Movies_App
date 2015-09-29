@@ -10,14 +10,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -28,6 +26,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.popular_movies.ActivityDetails;
 import com.example.popular_movies.Adapters.GridViewAdapter;
 import com.example.popular_movies.Listeners.EndlessScrollListener;
+import com.example.popular_movies.Listeners.GridListener;
 import com.example.popular_movies.MainActivity;
 import com.example.popular_movies.R;
 import com.example.popular_movies.app.AppController;
@@ -198,7 +197,7 @@ public class GridFragment extends Fragment {
 
                     gridview.setAdapter(new GridViewAdapter(getActivity(), DetailsList));
 
-                    gridview.setOnItemClickListener(new Listeners(getActivity().getApplicationContext(), gridview));
+                    gridview.setOnItemClickListener(new GridListener(getActivity(), gridview ,DetailsList));
 
                     Log.d("LOG", "" + "in background" + last_position);
                     if(temp > last_position){
@@ -237,45 +236,5 @@ public class GridFragment extends Fragment {
         // Adding request to request queue
         AppController.getInstance().addToRequestQueue(jsonObjReq);
     }
-
-
-    // listeners
-    private class Listeners implements AdapterView.OnItemClickListener {
-
-        private Context mContext;
-        private GridView mgridview;
-
-        public Listeners(Context context, GridView gridView) {
-            mContext = context;
-            mgridview = gridView;
-        }
-
-        @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            GridFragment.last_position = position;
-
-            mgridview.setSelected(true);
-            mgridview.setSelection(position);
-            mgridview.setItemChecked(position, true);
-
-            int screenOrientation = getResources().getConfiguration().orientation;
-
-            Bundle bundle = new Bundle();
-            bundle.putString(Const.OMG_ID, DetailsList.get(position).getId());
-
-            if (screenOrientation == Configuration.ORIENTATION_PORTRAIT) {
-                startActivity(new Intent(mContext, ActivityDetails.class).putExtras(bundle));
-            } else if (screenOrientation == Configuration.ORIENTATION_LANDSCAPE && MainActivity.density < 600) {
-                startActivity(new Intent(mContext, ActivityDetails.class).putExtras(bundle));
-            } else if (screenOrientation == Configuration.ORIENTATION_LANDSCAPE && MainActivity.density > 600) {
-                detailsFragmet fragment = new detailsFragmet();
-                fragment.setArguments(bundle);
-                getActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.details, fragment)
-                        .commit();
-            }
-        }
-    }
-
 
 }
