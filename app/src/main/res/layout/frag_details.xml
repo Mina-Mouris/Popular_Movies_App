@@ -84,6 +84,17 @@
                 android:text=""
                 android:textSize="18dp" />
 
+            <CheckBox
+                android:id="@+id/favoritecheckBox"
+                android:button="@drawable/customdrawablecheckbox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/image"
+                android:layout_below="@+id/Vote"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="40dp"
+                android:layout_marginRight="20dp"/>
+
             <TextView
                 android:id="@+id/overView"
                 android:layout_width="match_parent"
