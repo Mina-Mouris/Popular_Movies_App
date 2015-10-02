@@ -2,8 +2,6 @@ package com.example.popular_movies.fragments;
 
 
 import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.net.Uri;
@@ -14,7 +12,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.Toast;
 
@@ -23,7 +20,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.example.popular_movies.ActivityDetails;
 import com.example.popular_movies.Adapters.GridViewAdapter;
 import com.example.popular_movies.Listeners.EndlessScrollListener;
 import com.example.popular_movies.Listeners.GridListener;
@@ -32,6 +28,7 @@ import com.example.popular_movies.R;
 import com.example.popular_movies.app.AppController;
 import com.example.popular_movies.models.detailsModel;
 import com.example.popular_movies.utils.Const;
+import com.example.popular_movies.utils.ConstStrings;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -52,26 +49,6 @@ public class GridFragment extends Fragment {
     private ProgressDialog pDialog;
 
     private ArrayList<detailsModel> DetailsList;
-
-    private static String sort_by;
-
-    public static String getSort_by() {
-        return sort_by;
-    }
-
-    public static void setSort_by(String sort_by) {
-        GridFragment.sort_by = sort_by;
-    }
-
-    private static String Resolution;
-
-    public static String getResolution() {
-        return Resolution;
-    }
-
-    public static void setResolution(String resolution) {
-        Resolution = resolution;
-    }
 
     public static int last_position = 0;
     protected static int temp = 0;
@@ -101,7 +78,7 @@ public class GridFragment extends Fragment {
                 getString(R.string.pref_resolution_key),
                 getString(R.string.pref_Res_high));
 
-        this.Resolution = Resolution;
+        Const.setResolution(Resolution);
 
         screenOrientation = getResources().getConfiguration().orientation;
 
@@ -140,7 +117,7 @@ public class GridFragment extends Fragment {
     void set_default_item_details(int position) {
         //to set the details for first item by default
         Bundle bundle = new Bundle();
-        bundle.putString(Const.OMG_ID, DetailsList.get(position).getId());
+        bundle.putString(ConstStrings.OMG_ID, DetailsList.get(position).getId());
 
         detailsFragmet fragment = new detailsFragmet();
         fragment.setArguments(bundle);
@@ -162,12 +139,12 @@ public class GridFragment extends Fragment {
                 getString(R.string.pref_sortBy_key),
                 getString(R.string.pref_sortBy_mostPopular));
 
-        this.sort_by = sortBy;
+        Const.setSort_by(sortBy);
 
-        Uri builtUri = Uri.parse(Const.URL_API).buildUpon()
-                .appendQueryParameter(Const.PAGE_TAG, Integer.toString(page))
-                .appendQueryParameter(Const.SORT_BY_TAG, sortBy)
-                .appendQueryParameter(Const.KEY_API_TAG, Const.URL_API_KEY)
+        Uri builtUri = Uri.parse(ConstStrings.URL_API).buildUpon()
+                .appendQueryParameter(ConstStrings.PAGE_TAG, Integer.toString(page))
+                .appendQueryParameter(ConstStrings.SORT_BY_TAG, sortBy)
+                .appendQueryParameter(ConstStrings.KEY_API_TAG, ConstStrings.URL_API_KEY)
                 .build();
 
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
@@ -184,13 +161,13 @@ public class GridFragment extends Fragment {
                         DetailsList = new ArrayList<detailsModel>();
                     }
                     // Parsing json object response
-                    JSONArray resultArray = response.getJSONArray(Const.OMG_RESULTS);
+                    JSONArray resultArray = response.getJSONArray(ConstStrings.OMG_RESULTS);
                     for (int i = 0; i < resultArray.length(); i++) {
 
                         JSONObject Object = resultArray.getJSONObject(i);
                         detailsModel temp = new detailsModel();
-                        temp.setId(Object.getString(Const.OMG_ID));
-                        temp.setPosterImage_url(Object.getString(Const.OMG_POSTER_PATH));
+                        temp.setId(Object.getString(ConstStrings.OMG_ID));
+                        temp.setPosterImage_url(Object.getString(ConstStrings.OMG_POSTER_PATH));
 
                         DetailsList.add(temp);
                     }
@@ -206,7 +183,7 @@ public class GridFragment extends Fragment {
 
                     gridview.setSelection(last_position);
 
-                    if (screenOrientation == Configuration.ORIENTATION_LANDSCAPE && MainActivity.density > 600) {
+                    if (screenOrientation == Configuration.ORIENTATION_LANDSCAPE && Const.getDensity() > 600) {
                         set_default_item_details(last_position);
                     }
 

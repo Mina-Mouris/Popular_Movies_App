@@ -13,14 +13,14 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.example.popular_movies.fragments.GridFragment;
-
+import com.example.popular_movies.utils.Const;
 
 
 public class MainActivity extends ActionBarActivity {
 
     int screenOrientation;
 
-    public static float density;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +33,8 @@ public class MainActivity extends ActionBarActivity {
                 .commit();
 
         screenOrientation = getResources().getConfiguration().orientation;
-        density = getdensity();
+
+        Const.setDensity(getdensity());
 
         if (screenOrientation == Configuration.ORIENTATION_PORTRAIT) {
             hideDetailsPane();
@@ -74,14 +75,14 @@ public class MainActivity extends ActionBarActivity {
                 getString(R.string.pref_sortBy_key),
                 getString(R.string.pref_sortBy_mostPopular));
 
-        if (!sortBy.equals(GridFragment.getSort_by())) {
+        if (!sortBy.equals(Const.getSort_by())) {
             GridFragment.changed = true;
             GridFragment.last_position = 0;
             GridFragment fragment = new GridFragment();
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.grid, fragment)
                     .commit();
-        } else if (!Resolution.equals(GridFragment.getResolution())) {
+        } else if (!Resolution.equals(Const.getResolution())) {
             GridFragment.changed = true;
             GridFragment fragment = new GridFragment();
             getSupportFragmentManager().beginTransaction()

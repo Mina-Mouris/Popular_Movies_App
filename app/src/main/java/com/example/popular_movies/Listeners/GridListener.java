@@ -17,6 +17,7 @@ import com.example.popular_movies.fragments.GridFragment;
 import com.example.popular_movies.fragments.detailsFragmet;
 import com.example.popular_movies.models.detailsModel;
 import com.example.popular_movies.utils.Const;
+import com.example.popular_movies.utils.ConstStrings;
 
 import java.util.ArrayList;
 
@@ -47,13 +48,13 @@ public class GridListener implements AdapterView.OnItemClickListener {
         int screenOrientation = mContext.getResources().getConfiguration().orientation;
 
         Bundle bundle = new Bundle();
-        bundle.putString(Const.OMG_ID, mThumbIds.get(position).getId());
+        bundle.putString(ConstStrings.OMG_ID, mThumbIds.get(position).getId());
 
         if (screenOrientation == Configuration.ORIENTATION_PORTRAIT) {
             mContext.startActivity(new Intent(mContext, ActivityDetails.class).putExtras(bundle));
-        } else if (screenOrientation == Configuration.ORIENTATION_LANDSCAPE && MainActivity.density < 600) {
+        } else if (screenOrientation == Configuration.ORIENTATION_LANDSCAPE && Const.getDensity() < 600) {
             mContext.startActivity(new Intent(mContext, ActivityDetails.class).putExtras(bundle));
-        } else if (screenOrientation == Configuration.ORIENTATION_LANDSCAPE && MainActivity.density > 600) {
+        } else if (screenOrientation == Configuration.ORIENTATION_LANDSCAPE && Const.getDensity() > 600) {
             detailsFragmet fragment = new detailsFragmet();
             fragment.setArguments(bundle);
             FragmentManager fragmentManager = ((FragmentActivity) mContext).getSupportFragmentManager();

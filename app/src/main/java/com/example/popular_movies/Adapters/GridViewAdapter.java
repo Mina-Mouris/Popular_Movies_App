@@ -14,6 +14,7 @@ import com.example.popular_movies.R;
 import com.example.popular_movies.fragments.GridFragment;
 import com.example.popular_movies.models.detailsModel;
 import com.example.popular_movies.utils.Const;
+import com.example.popular_movies.utils.ConstStrings;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -67,23 +68,23 @@ public class GridViewAdapter extends BaseAdapter {
                 PreferenceManager.getDefaultSharedPreferences(mContext);
         String Resolution = sharedPrefs.getString(mContext.getString(R.string.pref_resolution_key),mContext.getString(R.string.pref_Res_high));
 
-        GridFragment.setResolution(Resolution);
+        Const.setResolution(Resolution);
 
         if(Resolution.equals("high")){
             Picasso.with(mContext)
-                    .load(Const.URL_IMAGE_PATH_high + mThumbIds.get(position).getPosterImage_url())
+                    .load(ConstStrings.URL_IMAGE_PATH_high + mThumbIds.get(position).getPosterImage_url())
                     .placeholder(R.drawable.load)
                     .error(R.drawable.wrong)
                     .into(holder.image);
         }else if(Resolution.equals("medium")){
             Picasso.with(mContext)
-                    .load(Const.URL_IMAGE_PATH_medium + mThumbIds.get(position).getPosterImage_url())
+                    .load(ConstStrings.URL_IMAGE_PATH_medium + mThumbIds.get(position).getPosterImage_url())
                     .placeholder(R.drawable.load)
                     .error(R.drawable.wrong)
                     .into(holder.image);
         }else if(Resolution.equals("low")){
             Picasso.with(mContext)
-                    .load(Const.URL_IMAGE_PATH_low + mThumbIds.get(position).getPosterImage_url())
+                    .load(ConstStrings.URL_IMAGE_PATH_low + mThumbIds.get(position).getPosterImage_url())
                     .placeholder(R.drawable.load)
                     .error(R.drawable.wrong)
                     .into(holder.image);

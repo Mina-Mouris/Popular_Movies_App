@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -32,6 +31,7 @@ import com.example.popular_movies.models.detailsModel;
 import com.example.popular_movies.models.reviewModel;
 import com.example.popular_movies.models.trailerModel;
 import com.example.popular_movies.utils.Const;
+import com.example.popular_movies.utils.ConstStrings;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -92,7 +92,7 @@ public class detailsFragmet extends android.support.v4.app.Fragment {
                 PreferenceManager.getDefaultSharedPreferences(getActivity());
         String Resolution = sharedPrefs.getString(getString(R.string.pref_resolution_key), getString(R.string.pref_Res_high));
 
-        if(!Resolution.equals(GridFragment.getResolution())){
+        if(!Resolution.equals(Const.getResolution())){
             buildDetailsScreen(bundle);
         }
 
@@ -100,7 +100,7 @@ public class detailsFragmet extends android.support.v4.app.Fragment {
 
     void buildDetailsScreen(Bundle bundel) {
         detailsModel model = new detailsModel();
-        model.setId(bundel.getString(Const.OMG_ID));
+        model.setId(bundel.getString(ConstStrings.OMG_ID));
 
         makeJsonObjectRequest_to_get_movie_details(model.getId());
 
@@ -148,8 +148,8 @@ public class detailsFragmet extends android.support.v4.app.Fragment {
 
         showpDialog();
 
-        Uri builtUri = Uri.parse(Const.URL_API_FOR_DETAILS + id + "?").buildUpon()
-                .appendQueryParameter(Const.KEY_API_TAG, Const.URL_API_KEY)
+        Uri builtUri = Uri.parse(ConstStrings.URL_API_FOR_DETAILS + id + "?").buildUpon()
+                .appendQueryParameter(ConstStrings.KEY_API_TAG, ConstStrings.URL_API_KEY)
                 .build();
 
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
@@ -165,13 +165,13 @@ public class detailsFragmet extends android.support.v4.app.Fragment {
                     if(response != null) {
 
                         temp = new detailsModel();
-                        temp.setPosterImage_url(response.getString(Const.OMG_POSTER_PATH));
-                        temp.setBackImage_url(response.getString(Const.OMG_BACKDROP_PATH));
-                        temp.setVote(response.getString(Const.OMG_VOTE));
-                        temp.setTitle(response.getString(Const.OMG_TITLE));
-                        temp.setOverView(response.getString(Const.OMG_OVERVIEW));
-                        temp.setDate(response.getString(Const.OMG_DATE));
-                        temp.setRunTime(response.getString(Const.OMG_RUNTIME));
+                        temp.setPosterImage_url(response.getString(ConstStrings.OMG_POSTER_PATH));
+                        temp.setBackImage_url(response.getString(ConstStrings.OMG_BACKDROP_PATH));
+                        temp.setVote(response.getString(ConstStrings.OMG_VOTE));
+                        temp.setTitle(response.getString(ConstStrings.OMG_TITLE));
+                        temp.setOverView(response.getString(ConstStrings.OMG_OVERVIEW));
+                        temp.setDate(response.getString(ConstStrings.OMG_DATE));
+                        temp.setRunTime(response.getString(ConstStrings.OMG_RUNTIME));
 
                         ImageView imageview = ((ImageView) rootView.findViewById(R.id.image));
 
@@ -181,19 +181,19 @@ public class detailsFragmet extends android.support.v4.app.Fragment {
 
                         if(Resolution.equals("high")){
                             Picasso.with(getActivity())
-                                    .load(Const.URL_IMAGE_PATH_high + temp.getBackImage_url())
+                                    .load(ConstStrings.URL_IMAGE_PATH_high + temp.getBackImage_url())
                                     .placeholder(R.drawable.load)
                                     .error(R.drawable.wrong)
                                     .into(imageview);
                         }else if(Resolution.equals("medium")){
                             Picasso.with(getActivity())
-                                    .load(Const.URL_IMAGE_PATH_medium + temp.getBackImage_url())
+                                    .load(ConstStrings.URL_IMAGE_PATH_medium + temp.getBackImage_url())
                                     .placeholder(R.drawable.load)
                                     .error(R.drawable.wrong)
                                     .into(imageview);
                         }else if(Resolution.equals("low")){
                             Picasso.with(getActivity())
-                                    .load(Const.URL_IMAGE_PATH_low + temp.getBackImage_url())
+                                    .load(ConstStrings.URL_IMAGE_PATH_low + temp.getBackImage_url())
                                     .placeholder(R.drawable.load)
                                     .error(R.drawable.wrong)
                                     .into(imageview);
@@ -241,8 +241,8 @@ public class detailsFragmet extends android.support.v4.app.Fragment {
 
         showpDialog();
 
-        Uri builtUri = Uri.parse(Const.URL_API_FOR_DETAILS + id + Const.PAR_VIDEO).buildUpon()
-                .appendQueryParameter(Const.KEY_API_TAG, Const.URL_API_KEY)
+        Uri builtUri = Uri.parse(ConstStrings.URL_API_FOR_DETAILS + id + ConstStrings.PAR_VIDEO).buildUpon()
+                .appendQueryParameter(ConstStrings.KEY_API_TAG, ConstStrings.URL_API_KEY)
                 .build();
 
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
@@ -256,13 +256,13 @@ public class detailsFragmet extends android.support.v4.app.Fragment {
 
                     trailerListNames = new ArrayList<trailerModel>();
                     // Parsing json object response
-                    JSONArray resultArray = response.getJSONArray(Const.OMG_RESULTS);
+                    JSONArray resultArray = response.getJSONArray(ConstStrings.OMG_RESULTS);
                     trailerModel temp;
                     for (int i = 0; i < resultArray.length(); i++) {
                         JSONObject Object = resultArray.getJSONObject(i);
                         temp = new trailerModel();
-                        temp.setName(Object.getString(Const.OMG_VIDEO_name));
-                        temp.setKey(Object.getString(Const.OMG_VIDEO_KEY));
+                        temp.setName(Object.getString(ConstStrings.OMG_VIDEO_name));
+                        temp.setKey(Object.getString(ConstStrings.OMG_VIDEO_KEY));
                         trailerListNames.add(temp);
                     }
 
@@ -274,7 +274,7 @@ public class detailsFragmet extends android.support.v4.app.Fragment {
                     trailerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                         @Override
                         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                            getActivity().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(Const.URL_VIDEO + trailerListNames.get(position).getKey())));
+                            getActivity().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(ConstStrings.URL_VIDEO + trailerListNames.get(position).getKey())));
                         }
                     });
 
@@ -314,8 +314,8 @@ public class detailsFragmet extends android.support.v4.app.Fragment {
 
         showpDialog();
 
-        Uri builtUri = Uri.parse(Const.URL_API_FOR_DETAILS + id + Const.PAR_REVIEW).buildUpon()
-                .appendQueryParameter(Const.KEY_API_TAG, Const.URL_API_KEY)
+        Uri builtUri = Uri.parse(ConstStrings.URL_API_FOR_DETAILS + id + ConstStrings.PAR_REVIEW).buildUpon()
+                .appendQueryParameter(ConstStrings.KEY_API_TAG, ConstStrings.URL_API_KEY)
                 .build();
 
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
@@ -329,13 +329,13 @@ public class detailsFragmet extends android.support.v4.app.Fragment {
 
                     reviewListNames = new ArrayList<reviewModel>();
                     // Parsing json object response
-                    JSONArray resultArray = response.getJSONArray(Const.OMG_RESULTS);
+                    JSONArray resultArray = response.getJSONArray(ConstStrings.OMG_RESULTS);
                     reviewModel temp;
                     for (int i = 0; i < resultArray.length(); i++) {
                         JSONObject Object = resultArray.getJSONObject(i);
                         temp = new reviewModel();
-                        temp.setAuthor(Object.getString(Const.OMG_REVIEW_AUTHOR));
-                        temp.setContent(Object.getString(Const.OMG_REVIEW_CONTENT));
+                        temp.setAuthor(Object.getString(ConstStrings.OMG_REVIEW_AUTHOR));
+                        temp.setContent(Object.getString(ConstStrings.OMG_REVIEW_CONTENT));
                         reviewListNames.add(temp);
                     }
 
