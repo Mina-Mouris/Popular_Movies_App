@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -115,6 +116,31 @@ public class detailsFragmet extends android.support.v4.app.Fragment {
             pDialog.dismiss();
     }
 
+    //to get the height of the listview
+    public void justifyListViewHeightBasedOnChildren (ListView listView) {
+
+        ListAdapter adapter = listView.getAdapter();
+
+        if (adapter == null) {
+            return;
+        }
+        ViewGroup vg = listView;
+        int totalHeight = 0;
+        int listWidth = listView.getMeasuredWidth();
+        for (int i = 0; i < adapter.getCount(); i++) {
+            View listItem = adapter.getView(i, null, vg);
+            listItem.measure(
+                    View.MeasureSpec.makeMeasureSpec(listWidth, View.MeasureSpec.EXACTLY),
+                    View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+            totalHeight += listItem.getMeasuredHeight();
+        }
+
+        ViewGroup.LayoutParams par = listView.getLayoutParams();
+        par.height = totalHeight + (listView.getDividerHeight() * (adapter.getCount() - 1));
+        listView.setLayoutParams(par);
+        listView.requestLayout();
+    }
+
     /**
      * Method to make json object request where json response starts wtih {
      */
@@ -210,6 +236,7 @@ public class detailsFragmet extends android.support.v4.app.Fragment {
         AppController.getInstance().addToRequestQueue(jsonObjReq);
     }
 
+
     private void makeJsonObjectRequest_to_get_movie_video(final String id) {
 
         showpDialog();
@@ -243,32 +270,11 @@ public class detailsFragmet extends android.support.v4.app.Fragment {
 
                     TrailerListAdapter adapter = new TrailerListAdapter(getActivity(), trailerListNames);
                     trailerList.setAdapter(adapter);
+                    justifyListViewHeightBasedOnChildren(trailerList);
                     trailerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                         @Override
                         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                             getActivity().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(Const.URL_VIDEO + trailerListNames.get(position).getKey())));
-                        }
-                    });
-
-                    trailerList.setOnTouchListener(new View.OnTouchListener() {
-                        @Override
-                        public boolean onTouch(View v, MotionEvent event) {
-                            int action = event.getAction();
-                            switch (action) {
-                                case MotionEvent.ACTION_DOWN:
-                                    // Disallow ScrollView to intercept touch events.
-                                    v.getParent().requestDisallowInterceptTouchEvent(true);
-                                    break;
-
-                                case MotionEvent.ACTION_UP:
-                                    // Allow ScrollView to intercept touch events.
-                                    v.getParent().requestDisallowInterceptTouchEvent(false);
-                                    break;
-                            }
-
-                            // Handle ListView touch events.
-                            v.onTouchEvent(event);
-                            return true;
                         }
                     });
 
@@ -335,16 +341,10 @@ public class detailsFragmet extends android.support.v4.app.Fragment {
 
                     reviewList =(ListView) rootView.findViewById(R.id.ReviewlistView);
 
-                    ReviewListAdapter adapter=new ReviewListAdapter(getActivity(), reviewListNames);
+                    ReviewListAdapter adapter = new ReviewListAdapter(getActivity(), reviewListNames);
                     reviewList.setAdapter(adapter);
-                    reviewList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                        @Override
-                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                            //getActivity().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(Const.URL_VIDEO + trailerListNames.get(position).getKey())));
-                        }
-                    });
 
-                    reviewList.setOnTouchListener(new View.OnTouchListener() {
+                    /*reviewList.setOnTouchListener(new View.OnTouchListener() {
                         @Override
                         public boolean onTouch(View v, MotionEvent event) {
                             int action = event.getAction();
@@ -365,7 +365,8 @@ public class detailsFragmet extends android.support.v4.app.Fragment {
                             return true;
                         }
                     });
-
+*/
+                    justifyListViewHeightBasedOnChildren(reviewList);
 
                 } catch (Exception e) {
                     e.printStackTrace();

@@ -135,7 +135,7 @@
                     android:id="@+id/listView"
                     android:layout_margin="20dp"
                     android:layout_width="fill_parent"
-                    android:layout_height="200dp"
+                    android:layout_height="fill_parent"
                     android:layout_below="@+id/t"
                     android:layout_alignParentBottom="true">
                 </ListView>
@@ -170,7 +170,7 @@
                     android:id="@+id/ReviewlistView"
                     android:layout_margin="20dp"
                     android:layout_width="fill_parent"
-                    android:layout_height="200dp"
+                    android:layout_height="fill_parent"
                     android:layout_below="@+id/tt"
                     android:layout_alignParentBottom="true">
                 </ListView>

@@ -119,7 +119,7 @@ public class GridFragment extends Fragment {
             @Override
             public void onLoadMore(int page, int totalItemsCount) {
                 //load next page when scroll down
-                last_position = totalItemsCount - 9;
+                last_position = totalItemsCount - 8;
                 Log.d("LOG", "" + "in scroll change" + last_position);
                 makeJsonObjectRequest(page);
             }
