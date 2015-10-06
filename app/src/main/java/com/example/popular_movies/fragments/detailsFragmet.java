@@ -10,6 +10,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -281,6 +284,13 @@ public class detailsFragmet extends android.support.v4.app.Fragment {
 
             @Override
             public void onErrorResponse(VolleyError error) {
+                FragmentManager fragmentManager = ((FragmentActivity) mContext).getSupportFragmentManager();
+                fragmentManager.beginTransaction()
+                        .replace(R.id.details, new Fragment())
+                        .commit();
+                Toast.makeText(mContext,
+                            "No Content Found",
+                            Toast.LENGTH_LONG).show();
                 VolleyLog.d(TAG, "Error: " + error.getMessage());
                 /*Toast.makeText(mContext,
                         error.getMessage(), Toast.LENGTH_SHORT).show();*/
