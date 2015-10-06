@@ -11,6 +11,7 @@ public class ConstStrings {
     public static final String SORT_BY_TAG = "sort_by";
     public static final String KEY_API_TAG = "api_key";
     public static final String PAGE_TAG = "page";
+    public static final String Favorite_VALUE = "favorite";
 
     public static final String OMG_RESULTS = "results";
     public static final String OMG_ID = "id";

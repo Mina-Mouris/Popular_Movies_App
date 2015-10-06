@@ -10,7 +10,7 @@
         android:id="@+id/grid"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="12"
+        android:layout_weight="10"
         android:name="com.example.popular_movies.pop_fragments.GridFragment"
         tools:layout="@layout/fragment_grid" />
 
@@ -18,8 +18,8 @@
         android:id="@+id/details"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="8"
+        android:layout_weight="10"
         android:name="com.example.popular_movies.pop_fragments.detailsFragmet"
-        tools:layout="@layout/frag_details" />
+        tools:layout="@layout/frag_details"/>
 
 </LinearLayout>

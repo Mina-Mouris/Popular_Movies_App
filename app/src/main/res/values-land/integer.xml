@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="grid_rows" type="integer">3</item>
+
+    <item name="image_h" type="dimen">@dimen/image_height_land</item>
+</resources>

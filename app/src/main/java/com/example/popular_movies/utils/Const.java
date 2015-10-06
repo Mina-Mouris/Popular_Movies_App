@@ -10,6 +10,16 @@ public class Const {
 
     private static String Resolution;
 
+    public static boolean isTwoPane() {
+        return twoPane;
+    }
+
+    public static void setTwoPane(boolean twoPane) {
+        Const.twoPane = twoPane;
+    }
+
+    private static boolean twoPane;
+
     public static float getDensity() {return density;}
 
     public static void setDensity(float density) {Const.density = density;}

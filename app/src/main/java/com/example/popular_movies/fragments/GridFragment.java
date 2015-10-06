@@ -2,17 +2,24 @@ package com.example.popular_movies.fragments;
 
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.database.Cursor;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.GridView;
+import android.widget.ListAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -26,6 +33,7 @@ import com.example.popular_movies.Listeners.GridListener;
 import com.example.popular_movies.MainActivity;
 import com.example.popular_movies.R;
 import com.example.popular_movies.app.AppController;
+import com.example.popular_movies.data.favoriteContract;
 import com.example.popular_movies.models.detailsModel;
 import com.example.popular_movies.utils.Const;
 import com.example.popular_movies.utils.ConstStrings;
@@ -39,6 +47,8 @@ import java.util.ArrayList;
  * A simple {@link Fragment} subclass.
  */
 public class GridFragment extends Fragment {
+
+    private static Context mContext;
 
     private View rootView;
 
@@ -61,6 +71,10 @@ public class GridFragment extends Fragment {
         // Required empty public constructor
     }
 
+    public GridFragment(Context c){
+        mContext = c;
+    }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -78,6 +92,10 @@ public class GridFragment extends Fragment {
                 getString(R.string.pref_resolution_key),
                 getString(R.string.pref_Res_high));
 
+        String sortBy = sharedPrefs.getString(
+                getString(R.string.pref_sortBy_key),
+                getString(R.string.pref_sortBy_mostPopular));
+
         Const.setResolution(Resolution);
 
         screenOrientation = getResources().getConfiguration().orientation;
@@ -88,19 +106,56 @@ public class GridFragment extends Fragment {
 
         gridview = (GridView) rootView.findViewById(R.id.gridview);
 
-        makeJsonObjectRequest(1);
+        if(!sortBy.equals(ConstStrings.Favorite_VALUE)) {
+            makeJsonObjectRequest(1);
 
-        temp = last_position;
+            temp = last_position;
 
-        gridview.setOnScrollListener(new EndlessScrollListener() {
-            @Override
-            public void onLoadMore(int page, int totalItemsCount) {
-                //load next page when scroll down
-                last_position = totalItemsCount - 8;
-                Log.d("LOG", "" + "in scroll change" + last_position);
-                makeJsonObjectRequest(page);
+            gridview.setOnScrollListener(new EndlessScrollListener() {
+                @Override
+                public void onLoadMore(int page, int totalItemsCount) {
+                    //load next page when scroll down
+                    last_position = totalItemsCount - 8;
+                    Log.d("LOG", "" + "in scroll change" + last_position);
+                    makeJsonObjectRequest(page);
+                }
+            });
+        }else if (sortBy.equals(ConstStrings.Favorite_VALUE)){
+            Const.setSort_by(ConstStrings.Favorite_VALUE);
+
+            Uri uri = favoriteContract.MovieEntry.CONTENT_URI;
+            Cursor cursor = mContext.getContentResolver().query(uri,null,null,null,null);
+
+            if (!cursor.moveToFirst()) {
+                Toast.makeText(mContext," no content yet!", Toast.LENGTH_LONG).show();
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.details, new Fragment())
+                        .commit();
+            } else {
+                DetailsList = new ArrayList<detailsModel>();
+                do {
+                    detailsModel temp = new detailsModel();
+                    temp.setId(cursor.getString(cursor.getColumnIndex(favoriteContract.MovieEntry.COLUMN_MOVIE_ID)));
+                    temp.setPosterImage_url(cursor.getString(cursor.getColumnIndex(favoriteContract.MovieEntry.COLUMN_MOVIE_POSTER)));
+
+                    DetailsList.add(temp);
+                } while (cursor.moveToNext());
+                gridview.setAdapter(new GridViewAdapter(mContext, DetailsList));
+
+                gridview.setOnItemClickListener(new GridListener(getActivity(), gridview, DetailsList));
+
+                gridview.setSelection(last_position);
+
+                if(Const.isTwoPane()) {
+                    if (Const.getDensity() > 720) {
+                        set_default_item_details(last_position);
+                    }else if (screenOrientation == Configuration.ORIENTATION_LANDSCAPE && Const.getDensity() < 720){
+                        set_default_item_details(last_position);
+                    }
+                }
             }
-        });
+
+        }
         return rootView;
     }
 
@@ -119,7 +174,7 @@ public class GridFragment extends Fragment {
         Bundle bundle = new Bundle();
         bundle.putString(ConstStrings.OMG_ID, DetailsList.get(position).getId());
 
-        detailsFragmet fragment = new detailsFragmet();
+        detailsFragmet fragment = new detailsFragmet(mContext);
         fragment.setArguments(bundle);
         getActivity().getSupportFragmentManager().beginTransaction()
                 .replace(R.id.details, fragment)
@@ -172,9 +227,9 @@ public class GridFragment extends Fragment {
                         DetailsList.add(temp);
                     }
 
-                    gridview.setAdapter(new GridViewAdapter(getActivity(), DetailsList));
+                    gridview.setAdapter(new GridViewAdapter(mContext, DetailsList));
 
-                    gridview.setOnItemClickListener(new GridListener(getActivity(), gridview ,DetailsList));
+                    gridview.setOnItemClickListener(new GridListener(getActivity(), gridview, DetailsList));
 
                     Log.d("LOG", "" + "in background" + last_position);
                     if(temp > last_position){
@@ -183,16 +238,20 @@ public class GridFragment extends Fragment {
 
                     gridview.setSelection(last_position);
 
-                    if (screenOrientation == Configuration.ORIENTATION_LANDSCAPE && Const.getDensity() > 600) {
-                        set_default_item_details(last_position);
+                    if(Const.isTwoPane()) {
+                        if (Const.getDensity() > 720) {
+                            set_default_item_details(last_position);
+                        }else if (screenOrientation == Configuration.ORIENTATION_LANDSCAPE && Const.getDensity() < 720){
+                            set_default_item_details(last_position);
+                        }
                     }
 
 
                 } catch (Exception e) {
                     e.printStackTrace();
-//                    Toast.makeText(getActivity(),
-//                            "Error: " + e.getMessage(),
-//                            Toast.LENGTH_LONG).show();
+                    /*Toast.makeText(mContext,
+                            "Error: " + e.getMessage(),
+                            Toast.LENGTH_LONG).show();*/
                     Log.d(TAG, "Error: " + e.getMessage());
                 }
                 hidepDialog();
@@ -202,8 +261,8 @@ public class GridFragment extends Fragment {
             @Override
             public void onErrorResponse(VolleyError error) {
                 VolleyLog.d(TAG, "Error: " + error.getMessage());
-                Toast.makeText(getActivity().getApplicationContext(),
-                        error.getMessage(), Toast.LENGTH_SHORT).show();
+                /*Toast.makeText(mContext,
+                        error.getMessage(), Toast.LENGTH_SHORT).show();*/
                 Log.d(TAG, "Error Res: " + error.getMessage());
                 // hide the progress dialog
                 hidepDialog();
@@ -214,4 +273,9 @@ public class GridFragment extends Fragment {
         AppController.getInstance().addToRequestQueue(jsonObjReq);
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        hidepDialog();
+    }
 }

@@ -7,6 +7,7 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -27,7 +28,7 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        GridFragment fragment = new GridFragment();
+        GridFragment fragment = new GridFragment(this);
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.grid, fragment)
                 .commit();
@@ -36,12 +37,15 @@ public class MainActivity extends ActionBarActivity {
 
         Const.setDensity(getdensity());
 
-        if (screenOrientation == Configuration.ORIENTATION_PORTRAIT) {
-            hideDetailsPane();
+        if (findViewById(R.id.details) != null) {
+            Const.setTwoPane(true);
+            if (screenOrientation == Configuration.ORIENTATION_PORTRAIT && getdensity() < 720) {
+                hideDetailsPane();
+            }
         }
-
-        if (screenOrientation == Configuration.ORIENTATION_LANDSCAPE && getdensity() < 600) {
-            hideDetailsPane();
+        else
+        {
+            Const.setTwoPane(false);
         }
     }
 
@@ -75,16 +79,17 @@ public class MainActivity extends ActionBarActivity {
                 getString(R.string.pref_sortBy_key),
                 getString(R.string.pref_sortBy_mostPopular));
 
+        Log.d("tag",""+sortBy+"&&"+""+Const.getSort_by());
         if (!sortBy.equals(Const.getSort_by())) {
             GridFragment.changed = true;
             GridFragment.last_position = 0;
-            GridFragment fragment = new GridFragment();
+            GridFragment fragment = new GridFragment(this);
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.grid, fragment)
                     .commit();
         } else if (!Resolution.equals(Const.getResolution())) {
             GridFragment.changed = true;
-            GridFragment fragment = new GridFragment();
+            GridFragment fragment = new GridFragment(this);
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.grid, fragment)
                     .commit();

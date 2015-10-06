@@ -7,8 +7,8 @@
     <RelativeLayout
         android:id="@+id/linear"
         android:layout_width="match_parent"
-        android:layout_height="150dp"
-        android:background="#009999"
+        android:layout_height="120dp"
+        android:background="@color/appColor"
         android:orientation="vertical">
 
 
@@ -16,9 +16,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingLeft="40dp"
+            android:paddingTop="10dp"
+            android:paddingRight="10dp"
+            android:paddingBottom="10dp"
             android:gravity="center"
             android:layout_centerVertical="true"
-            android:textSize="40sp"
+            android:textSize="32sp"
             android:textColor="#fff"
             android:id="@+id/TitleTextView" />
 
@@ -39,7 +42,7 @@
             <ImageView
                 android:id="@+id/image"
                 android:layout_width="150dp"
-                android:layout_height="200dp"
+                android:layout_height="250dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginLeft="40dp"
                 android:scaleType="centerCrop" />
@@ -55,7 +58,7 @@
                 android:layout_marginRight="20dp"
                 android:gravity="left"
                 android:text=""
-                android:textSize="25dp" />
+                android:textSize="40sp" />
 
             <TextView
                 android:id="@+id/Runtime"
@@ -69,7 +72,7 @@
                 android:gravity="left"
                 android:text=""
                 android:textStyle="bold"
-                android:textSize="20dp" />
+                android:textSize="30dp" />
 
             <TextView
                 android:id="@+id/Vote"
@@ -82,7 +85,7 @@
                 android:layout_marginRight="20dp"
                 android:gravity="left"
                 android:text=""
-                android:textSize="18dp" />
+                android:textSize="20dp" />
 
             <CheckBox
                 android:id="@+id/favoritecheckBox"

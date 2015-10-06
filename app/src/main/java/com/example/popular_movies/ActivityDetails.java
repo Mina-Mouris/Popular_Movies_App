@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.example.popular_movies.fragments.detailsFragmet;
+
 
 public class ActivityDetails extends ActionBarActivity {
 
@@ -13,6 +15,11 @@ public class ActivityDetails extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
+
+        detailsFragmet fragment = new detailsFragmet(getApplicationContext());
+        this.getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragment, fragment)
+                .commit();
     }
 
 

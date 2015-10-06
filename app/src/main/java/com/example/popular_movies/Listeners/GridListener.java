@@ -50,12 +50,12 @@ public class GridListener implements AdapterView.OnItemClickListener {
         Bundle bundle = new Bundle();
         bundle.putString(ConstStrings.OMG_ID, mThumbIds.get(position).getId());
 
-        if (screenOrientation == Configuration.ORIENTATION_PORTRAIT) {
+        if (!Const.isTwoPane()) {
             mContext.startActivity(new Intent(mContext, ActivityDetails.class).putExtras(bundle));
-        } else if (screenOrientation == Configuration.ORIENTATION_LANDSCAPE && Const.getDensity() < 600) {
+        } else if (Const.isTwoPane() && screenOrientation == Configuration.ORIENTATION_PORTRAIT && Const.getDensity() < 720) {
             mContext.startActivity(new Intent(mContext, ActivityDetails.class).putExtras(bundle));
-        } else if (screenOrientation == Configuration.ORIENTATION_LANDSCAPE && Const.getDensity() > 600) {
-            detailsFragmet fragment = new detailsFragmet();
+        } else if (Const.isTwoPane() && Const.getDensity() > 600) {
+            detailsFragmet fragment = new detailsFragmet(mContext);
             fragment.setArguments(bundle);
             FragmentManager fragmentManager = ((FragmentActivity) mContext).getSupportFragmentManager();
             fragmentManager.beginTransaction()

@@ -1,8 +1,12 @@
 package com.example.popular_movies.fragments;
 
 import android.app.ProgressDialog;
+import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -11,9 +15,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,6 +34,8 @@ import com.example.popular_movies.Adapters.ReviewListAdapter;
 import com.example.popular_movies.R;
 import com.example.popular_movies.Adapters.TrailerListAdapter;
 import com.example.popular_movies.app.AppController;
+import com.example.popular_movies.data.favoriteContract;
+import com.example.popular_movies.data.favoriteDbHelper;
 import com.example.popular_movies.models.detailsModel;
 import com.example.popular_movies.models.reviewModel;
 import com.example.popular_movies.models.trailerModel;
@@ -44,7 +53,10 @@ import java.util.ArrayList;
  */
 public class detailsFragmet extends android.support.v4.app.Fragment {
 
+    private static Context mContext;
+
     private View rootView;
+    private CheckBox favoriteCheckBox;
     private Bundle bundle;
     // Progress dialog
     private ProgressDialog pDialog;
@@ -58,7 +70,12 @@ public class detailsFragmet extends android.support.v4.app.Fragment {
 
     private static final String TAG = "Volley";
 
-    public detailsFragmet() {
+    public detailsFragmet(){
+        setHasOptionsMenu(true);
+    }
+
+    public detailsFragmet(Context c) {
+        mContext = c ;
         setHasOptionsMenu(true);
     }
 
@@ -81,6 +98,11 @@ public class detailsFragmet extends android.support.v4.app.Fragment {
                 buildDetailsScreen(bundle);
             }
         }
+
+        favoriteCheckBox = (CheckBox) rootView.findViewById(R.id.favoritecheckBox);
+
+
+        //favoriteCheckBox.setChecked(true);
 
         return rootView;
     }
@@ -165,12 +187,13 @@ public class detailsFragmet extends android.support.v4.app.Fragment {
                     if(response != null) {
 
                         temp = new detailsModel();
+                        temp.setId(id);
                         temp.setPosterImage_url(response.getString(ConstStrings.OMG_POSTER_PATH));
                         temp.setBackImage_url(response.getString(ConstStrings.OMG_BACKDROP_PATH));
                         temp.setVote(response.getString(ConstStrings.OMG_VOTE));
                         temp.setTitle(response.getString(ConstStrings.OMG_TITLE));
                         temp.setOverView(response.getString(ConstStrings.OMG_OVERVIEW));
-                        temp.setDate(response.getString(ConstStrings.OMG_DATE));
+                        temp.setDate(((String[])response.getString(ConstStrings.OMG_DATE).split("-"))[0]);
                         temp.setRunTime(response.getString(ConstStrings.OMG_RUNTIME));
 
                         ImageView imageview = ((ImageView) rootView.findViewById(R.id.image));
@@ -181,19 +204,19 @@ public class detailsFragmet extends android.support.v4.app.Fragment {
 
                         if(Resolution.equals("high")){
                             Picasso.with(getActivity())
-                                    .load(ConstStrings.URL_IMAGE_PATH_high + temp.getBackImage_url())
+                                    .load(ConstStrings.URL_IMAGE_PATH_high + temp.getPosterImage_url())
                                     .placeholder(R.drawable.load)
                                     .error(R.drawable.wrong)
                                     .into(imageview);
                         }else if(Resolution.equals("medium")){
                             Picasso.with(getActivity())
-                                    .load(ConstStrings.URL_IMAGE_PATH_medium + temp.getBackImage_url())
+                                    .load(ConstStrings.URL_IMAGE_PATH_medium + temp.getPosterImage_url())
                                     .placeholder(R.drawable.load)
                                     .error(R.drawable.wrong)
                                     .into(imageview);
                         }else if(Resolution.equals("low")){
                             Picasso.with(getActivity())
-                                    .load(ConstStrings.URL_IMAGE_PATH_low + temp.getBackImage_url())
+                                    .load(ConstStrings.URL_IMAGE_PATH_low + temp.getPosterImage_url())
                                     .placeholder(R.drawable.load)
                                     .error(R.drawable.wrong)
                                     .into(imageview);
@@ -207,14 +230,49 @@ public class detailsFragmet extends android.support.v4.app.Fragment {
                         ((TextView) rootView.findViewById(R.id.Vote)).setText(temp.getVote() + "/10");
                         ((TextView) rootView.findViewById(R.id.Runtime)).setText(temp.getRunTime() + "min");
 
+                        Uri uri = favoriteContract.MovieEntry.CONTENT_URI;
+                        Cursor cursor = mContext.getContentResolver().query(uri,null,favoriteContract.MovieEntry.COLUMN_MOVIE_ID + "=?",
+                                new String[]{temp.getId()},null);
+                        if (!cursor.moveToFirst()) {
+                            favoriteCheckBox.setChecked(false);
+                        } else {
+                            favoriteCheckBox.setChecked(true);
+                        }
+
+
+                        favoriteCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                            @Override
+                            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                                if (isChecked) {
+                                    //add
+                                    favoriteDbHelper helper = new favoriteDbHelper(mContext);
+                                    SQLiteDatabase db = helper.getWritableDatabase();
+                                    ContentValues values = new ContentValues();
+                                    values.clear();
+                                    values.put(favoriteContract.MovieEntry.COLUMN_MOVIE_ID, temp.getId());
+                                    values.put(favoriteContract.MovieEntry.COLUMN_MOVIE_POSTER, temp.getPosterImage_url());
+
+                                    Uri uri = favoriteContract.MovieEntry.CONTENT_URI;
+                                    mContext.getApplicationContext().getContentResolver().insert(uri,values);
+
+                                } else {
+                                    Uri uri = favoriteContract.MovieEntry.CONTENT_URI;
+                                    mContext.getContentResolver().delete(uri,
+                                            favoriteContract.MovieEntry.COLUMN_MOVIE_ID + "=?",
+                                            new String[]{temp.getId()});
+                                }
+                            }
+                        });
+
+
                         makeJsonObjectRequest_to_get_movie_video(id);
                     }
 
                 } catch (Exception e) {
                     e.printStackTrace();
-//                    Toast.makeText(getActivity().getApplicationContext(),
-//                            "Error: " + e.getMessage(),
-//                            Toast.LENGTH_LONG).show();
+                    /*Toast.makeText(mContext,
+                            "Error: " + e.getMessage(),
+                            Toast.LENGTH_LONG).show();*/
                     Log.d(TAG, "Error: " + e.getMessage());
                 }
                 hidepDialog();
@@ -224,8 +282,8 @@ public class detailsFragmet extends android.support.v4.app.Fragment {
             @Override
             public void onErrorResponse(VolleyError error) {
                 VolleyLog.d(TAG, "Error: " + error.getMessage());
-                Toast.makeText(getActivity(),
-                        error.getMessage(), Toast.LENGTH_SHORT).show();
+                /*Toast.makeText(mContext,
+                        error.getMessage(), Toast.LENGTH_SHORT).show();*/
                 Log.d(TAG, "Error Res: " + error.getMessage());
                 // hide the progress dialog
                 hidepDialog();
@@ -257,36 +315,41 @@ public class detailsFragmet extends android.support.v4.app.Fragment {
                     trailerListNames = new ArrayList<trailerModel>();
                     // Parsing json object response
                     JSONArray resultArray = response.getJSONArray(ConstStrings.OMG_RESULTS);
-                    trailerModel temp;
-                    for (int i = 0; i < resultArray.length(); i++) {
-                        JSONObject Object = resultArray.getJSONObject(i);
-                        temp = new trailerModel();
-                        temp.setName(Object.getString(ConstStrings.OMG_VIDEO_name));
-                        temp.setKey(Object.getString(ConstStrings.OMG_VIDEO_KEY));
-                        trailerListNames.add(temp);
-                    }
-
-                    trailerList =(ListView) rootView.findViewById(R.id.listView);
-
-                    TrailerListAdapter adapter = new TrailerListAdapter(getActivity(), trailerListNames);
-                    trailerList.setAdapter(adapter);
-                    justifyListViewHeightBasedOnChildren(trailerList);
-                    trailerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                        @Override
-                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                            getActivity().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(ConstStrings.URL_VIDEO + trailerListNames.get(position).getKey())));
+                    Log.d(TAG,"t"+resultArray.length());
+                    if(resultArray.length() !=0) {
+                        trailerModel temp;
+                        for (int i = 0; i < resultArray.length(); i++) {
+                            JSONObject Object = resultArray.getJSONObject(i);
+                            temp = new trailerModel();
+                            temp.setName(Object.getString(ConstStrings.OMG_VIDEO_name));
+                            temp.setKey(Object.getString(ConstStrings.OMG_VIDEO_KEY));
+                            trailerListNames.add(temp);
                         }
-                    });
 
-                    final ScrollView scroll = (ScrollView) getActivity().findViewById(R.id.scroll);
-                    scroll.scrollTo(0, 0);
+                        trailerList = (ListView) rootView.findViewById(R.id.listView);
+
+                        TrailerListAdapter adapter = new TrailerListAdapter(getActivity(), trailerListNames);
+                        trailerList.setAdapter(adapter);
+                        justifyListViewHeightBasedOnChildren(trailerList);
+                        trailerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                            @Override
+                            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                getActivity().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(ConstStrings.URL_VIDEO + trailerListNames.get(position).getKey())));
+                            }
+                        });
+
+                        final ScrollView scroll = (ScrollView) getActivity().findViewById(R.id.scroll);
+                        scroll.scrollTo(0, 0);
+
+                    }else {
+                        ((RelativeLayout) rootView.findViewById(R.id.relative1)).setVisibility(View.GONE);
+                    }
 
                     makeJsonObjectRequest_to_get_movie_review(id);
 
-
                 } catch (Exception e) {
                     e.printStackTrace();
-                    /*Toast.makeText(getActivity(),
+                    /*Toast.makeText(mContext,
                             "Error: " + e.getMessage(),
                             Toast.LENGTH_LONG).show();*/
                     Log.d(TAG, "Error: " + e.getMessage());
@@ -298,8 +361,8 @@ public class detailsFragmet extends android.support.v4.app.Fragment {
             @Override
             public void onErrorResponse(VolleyError error) {
                 VolleyLog.d(TAG, "Error: " + error.getMessage());
-                Toast.makeText(getActivity(),
-                        error.getMessage(), Toast.LENGTH_SHORT).show();
+                /*Toast.makeText(mContext,
+                        error.getMessage(), Toast.LENGTH_SHORT).show()*/;
                 Log.d(TAG, "Error Res: " + error.getMessage());
                 // hide the progress dialog
                 hidepDialog();
@@ -330,19 +393,21 @@ public class detailsFragmet extends android.support.v4.app.Fragment {
                     reviewListNames = new ArrayList<reviewModel>();
                     // Parsing json object response
                     JSONArray resultArray = response.getJSONArray(ConstStrings.OMG_RESULTS);
-                    reviewModel temp;
-                    for (int i = 0; i < resultArray.length(); i++) {
-                        JSONObject Object = resultArray.getJSONObject(i);
-                        temp = new reviewModel();
-                        temp.setAuthor(Object.getString(ConstStrings.OMG_REVIEW_AUTHOR));
-                        temp.setContent(Object.getString(ConstStrings.OMG_REVIEW_CONTENT));
-                        reviewListNames.add(temp);
-                    }
+                    Log.d(TAG,"t"+resultArray.length());
+                    if(resultArray.length() !=0) {
+                        reviewModel temp;
+                        for (int i = 0; i < resultArray.length(); i++) {
+                            JSONObject Object = resultArray.getJSONObject(i);
+                            temp = new reviewModel();
+                            temp.setAuthor(Object.getString(ConstStrings.OMG_REVIEW_AUTHOR));
+                            temp.setContent(Object.getString(ConstStrings.OMG_REVIEW_CONTENT));
+                            reviewListNames.add(temp);
+                        }
 
-                    reviewList =(ListView) rootView.findViewById(R.id.ReviewlistView);
+                        reviewList = (ListView) rootView.findViewById(R.id.ReviewlistView);
 
-                    ReviewListAdapter adapter = new ReviewListAdapter(getActivity(), reviewListNames);
-                    reviewList.setAdapter(adapter);
+                        ReviewListAdapter adapter = new ReviewListAdapter(getActivity(), reviewListNames);
+                        reviewList.setAdapter(adapter);
 
                     /*reviewList.setOnTouchListener(new View.OnTouchListener() {
                         @Override
@@ -366,11 +431,14 @@ public class detailsFragmet extends android.support.v4.app.Fragment {
                         }
                     });
 */
-                    justifyListViewHeightBasedOnChildren(reviewList);
+                        justifyListViewHeightBasedOnChildren(reviewList);
+                    }else{
+                        ((RelativeLayout) rootView.findViewById(R.id.relative2)).setVisibility(View.GONE);
+                    }
 
                 } catch (Exception e) {
                     e.printStackTrace();
-                    /*Toast.makeText(getActivity(),
+                    /*Toast.makeText(mContext,
                             "Error: " + e.getMessage(),
                             Toast.LENGTH_LONG).show();*/
                     Log.d(TAG, "Error: " + e.getMessage());
@@ -382,8 +450,8 @@ public class detailsFragmet extends android.support.v4.app.Fragment {
             @Override
             public void onErrorResponse(VolleyError error) {
                 VolleyLog.d(TAG, "Error: " + error.getMessage());
-                Toast.makeText(getActivity(),
-                        error.getMessage(), Toast.LENGTH_SHORT).show();
+                /*Toast.makeText(mContext,
+                        error.getMessage(), Toast.LENGTH_SHORT).show();*/
                 Log.d(TAG, "Error Res: " + error.getMessage());
                 // hide the progress dialog
                 hidepDialog();
