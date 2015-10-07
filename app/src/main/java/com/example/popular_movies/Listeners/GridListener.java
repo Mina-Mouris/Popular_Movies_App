@@ -28,6 +28,7 @@ public class GridListener implements AdapterView.OnItemClickListener {
 
     private Context mContext;
     private GridView mgridview;
+
     // references to our images
     private ArrayList<detailsModel> mThumbIds;
 

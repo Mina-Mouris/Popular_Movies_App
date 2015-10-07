@@ -13,8 +13,13 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.ShareActionProvider;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -71,6 +76,10 @@ public class detailsFragmet extends android.support.v4.app.Fragment {
     ArrayList<trailerModel> trailerListNames;
     ArrayList<reviewModel> reviewListNames;
 
+    private ShareActionProvider mShareActionProvider;
+
+    private static final String SHARE_HASHTAG = " #PopMovieApp";
+
     private static final String TAG = "Volley";
 
     public detailsFragmet(){
@@ -80,6 +89,34 @@ public class detailsFragmet extends android.support.v4.app.Fragment {
     public detailsFragmet(Context c) {
         mContext = c ;
         setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        inflater.inflate(R.menu.detailfragment, menu);
+
+        // Retrieve the share menu item
+        MenuItem menuItem = menu.findItem(R.id.action_share);
+
+        // Get the provider and hold onto it to set/change the share intent.
+        mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(menuItem);
+    }
+
+    private Intent createShareMovieIntent() {
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+        shareIntent.setType("text/plain");
+        shareIntent.putExtra(Intent.EXTRA_TEXT,temp.getTitle() + "\n" + Uri.parse(ConstStrings.URL_VIDEO + trailerListNames.get(0).getKey()) + "\n" + SHARE_HASHTAG);
+        return shareIntent;
+    }
+
+    private Intent createShareNoContentIntent() {
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+        shareIntent.setType("text/plain");
+        shareIntent.putExtra(Intent.EXTRA_TEXT,temp.getTitle() + "\n" + Uri.parse(ConstStrings.URL_VIDEO + trailerListNames.get(0).getKey()) + "\n" + SHARE_HASHTAG);
+        return shareIntent;
     }
 
     @Override
@@ -103,9 +140,6 @@ public class detailsFragmet extends android.support.v4.app.Fragment {
         }
 
         favoriteCheckBox = (CheckBox) rootView.findViewById(R.id.favoritecheckBox);
-
-
-        //favoriteCheckBox.setChecked(true);
 
         return rootView;
     }
@@ -351,8 +385,13 @@ public class detailsFragmet extends android.support.v4.app.Fragment {
                         final ScrollView scroll = (ScrollView) getActivity().findViewById(R.id.scroll);
                         scroll.scrollTo(0, 0);
 
+                        mShareActionProvider.setShareIntent(createShareMovieIntent());
+
                     }else {
                         ((RelativeLayout) rootView.findViewById(R.id.relative1)).setVisibility(View.GONE);
+                        mShareActionProvider.setShareIntent(null);
+                        Toast.makeText(mContext,
+                                "No Trailer to Share", Toast.LENGTH_LONG).show();
                     }
 
                     makeJsonObjectRequest_to_get_movie_review(id);
