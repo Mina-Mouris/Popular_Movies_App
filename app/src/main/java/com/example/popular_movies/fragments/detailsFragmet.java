@@ -111,14 +111,6 @@ public class detailsFragmet extends android.support.v4.app.Fragment {
         return shareIntent;
     }
 
-    private Intent createShareNoContentIntent() {
-        Intent shareIntent = new Intent(Intent.ACTION_SEND);
-        shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
-        shareIntent.setType("text/plain");
-        shareIntent.putExtra(Intent.EXTRA_TEXT,temp.getTitle() + "\n" + Uri.parse(ConstStrings.URL_VIDEO + trailerListNames.get(0).getKey()) + "\n" + SHARE_HASHTAG);
-        return shareIntent;
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.frag_details, container, false);
