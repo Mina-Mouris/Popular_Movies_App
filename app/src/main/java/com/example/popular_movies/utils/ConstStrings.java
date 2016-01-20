@@ -1,7 +1,7 @@
 package com.example.popular_movies.utils;
 
 public class ConstStrings {
-    public static final String URL_API_KEY = "52fc78eb3f0fefb9f0b75496ce411a0e";
+    public static final String URL_API_KEY = "";
     public static final String URL_IMAGE_PATH_high = "http://image.tmdb.org/t/p/w342/";
     public static final String URL_IMAGE_PATH_medium = "http://image.tmdb.org/t/p/w185/";
     public static final String URL_IMAGE_PATH_low = "http://image.tmdb.org/t/p/w154/";
